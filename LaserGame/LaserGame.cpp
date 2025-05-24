@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿// https://softeer.ai/practice/11004
+
+#include <iostream>
 #include <string>
 #include <cassert>
 

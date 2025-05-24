@@ -1,4 +1,6 @@
-﻿#include <iostream>
+﻿// https://softeer.ai/practice/11001
+
+#include <iostream>
 
 using namespace std;
 
