@@ -1,3 +1,225 @@
+//
+//void PrintVec(vector<GptNumber>& data);
+//
+//
+//void QuickSort(vector<GptNumber>& source, int fromIdx, int toIdx);
+//GptNumber GetPivotValue(vector<GptNumber>& source, int from, int to);
+//
+//
+//void Solve()
+//{
+//	char strInput[8] = { 0,0,0,0,0,0,0,0 }; // 100.000 <- 7자리, + \0
+//
+//	cin >> strInput;
+//
+//	int N = atoi(strInput);
+//
+//	GptNumber* data = new GptNumber[N];
+//
+//	for (int i = 0; i < N; ++i)
+//	{
+//		cin >> input;
+//		GptNumber d = GptNumber(input);
+//		data.push_back(d);
+//	}
+//
+//	QuickSort(data, 0, N - 1);
+//
+//	PrintVec(data);
+//}
+//
+//
+//void QuickSort(vector<GptNumber>& source, int fromIdx, int toIdx)
+//{
+//	if (fromIdx >= toIdx)
+//	{
+//		return;
+//	}
+//
+//	GptNumber pivotValue = GetPivotValue(source, fromIdx, toIdx);
+//
+//	int headCursor = fromIdx;
+//	int tailCursor = toIdx;
+//
+//	while (headCursor < tailCursor)
+//	{
+//		GptNumber headValue = source[headCursor];
+//		GptNumber tailValue = source[tailCursor];
+//
+//		while (headValue.Compare(pivotValue) > 0
+//			&& headCursor < toIdx)
+//		{
+//			// headValue가 작으면 headCursor 이동
+//			++headCursor;
+//			headValue = source[headCursor];
+//		}
+//
+//		while (pivotValue.Compare(tailValue) > 0
+//			&& tailCursor > fromIdx)
+//		{
+//			// tailValue가 크면 tailCursor 이동
+//			--tailCursor;
+//			tailValue = source[tailCursor];
+//		}
+//		
+//		source[headCursor] = tailValue;
+//		source[tailCursor] = headValue;
+//	}
+//
+//	QuickSort(source, fromIdx, headCursor);
+//	QuickSort(source, headCursor + 1, toIdx);
+//}
+//
+//GptNumber GetPivotValue(vector<GptNumber>& source, int from, int to)
+//{
+//	int pivotIdx = (from + to) / 2;
+//
+//	GptNumber pivotCandidate1 = source[from];
+//	GptNumber pivotCandidate2 = source[pivotIdx];
+//	GptNumber pivotCandidate3 = source[to];
+//
+//	bool larger2than1 = pivotCandidate1.Compare(pivotCandidate2) > 0;
+//	bool larger3than2 = pivotCandidate2.Compare(pivotCandidate3) > 0;
+//	bool larger1than3 = pivotCandidate3.Compare(pivotCandidate1) > 0;
+//
+//	if (larger2than1) // 1 < 2
+//	{
+//		if (larger3than2) // 2 < 3
+//		{
+//			// 1 < 2 < 3
+//			return pivotCandidate2;
+//		}
+//
+//		// 1, 3 < 2
+//		if (larger1than3) // 3 < 1
+//		{
+//			return pivotCandidate1;
+//		}
+//
+//		return pivotCandidate3;
+//	}
+//	else // 2 < 1
+//	{
+//		if (larger3than2) // 2 < 3
+//		{
+//			// 2 < 1, 3
+//			if (larger1than3) // 3 < 1
+//			{
+//				return pivotCandidate3;
+//			}
+//
+//			return pivotCandidate1;
+//		}
+//
+//		// 3 < 2 < 1
+//		return pivotCandidate2;
+//	}
+//}
+//
+//
+//
+//int VecToI(vector<char>& vec)
+//{
+//	int result = 0;
+//
+//	int vecLength = vec.size();
+//	for (int i = 0; i < vecLength; ++i)
+//	{
+//		char cursor = vec[i];
+//
+//		if (cursor == '.')
+//		{
+//			continue;
+//		}
+//
+//		result *= 10;
+//		result += vec[i] - '0';
+//	}
+//
+//	return result;
+//}
+//
+//vector<char> ItoVec(int num)
+//{
+//	vector<char> reversed;
+//
+//	if (num == 0)
+//	{
+//		reversed.push_back('0');
+//
+//		return reversed;
+//	}
+//
+//	while (num != 0)
+//	{
+//		int dec = num % 10;
+//
+//		reversed.push_back(dec + '0');
+//
+//		num = num / 10;
+//	}
+//
+//	vector<char> result;
+//
+//	int reversedSize = reversed.size();
+//	for (int i = 0; i < reversedSize; ++i)
+//	{
+//		result.push_back(reversed[reversedSize - i - 1]);
+//	}
+//
+//	return result;
+//}
+//
+//string VecToStr(vector<char>& vec)
+//{
+//	int vecLen = vec.size();
+//
+//	char* data = new char[vecLen + 1];
+//
+//	int i = 0;
+//	for (i = 0; i < vecLen; ++i)
+//	{
+//		data[i] = vec[i];
+//	}
+//	data[i] = 0;
+//
+//	string resultString = string(data);
+//	return resultString;
+//}
+//
+//
+//template<typename T>
+//vector<T> Concat(vector<T>& first, vector<T>& last)
+//{
+//	int firstSize = first.size();
+//	int lastSize = last.size();
+//
+//	vector<T> result;
+//
+//	for (int i = 0; i < firstSize; ++i)
+//	{
+//		result.push_back(first[i]);
+//	}
+//
+//	for (int i = 0; i < lastSize; ++i)
+//	{
+//		result.push_back(last[i]);
+//	}
+//
+//	return result;
+//}
+//
+//void PrintVec(vector<GptNumber>& data)
+//{
+//	for (int i = 0; i < data.size(); ++i)
+//	{
+//		GptNumber d = data[i];
+//		string output = d.ToString();
+//		cout << output << endl;
+//	}
+//}
+
+
 #ifdef KKKKK
 
 
