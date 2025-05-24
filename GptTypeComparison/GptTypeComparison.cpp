@@ -2,6 +2,7 @@
 
 using namespace std;
 
+
 class GptNumber
 {
 public:
@@ -99,6 +100,80 @@ public:
 };
 
 
+static GptNumber* smallers;
+
+static GptNumber* equals;
+
+static GptNumber* biggers;
+
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+
+void TestGptNumberInit(GptNumber* data, int N)
+{
+	cout << endl;
+
+	for (int i = 0; i < N; ++i)
+	{
+		cout << data[i].IntegerPart;
+		if (data[i].FractionPart >= 0)
+		{
+			cout << "." << data[i].FractionPart;
+		}
+
+		cout << " " << data[i].StringVal << endl;
+	}
+}
+
+void TestComparison()
+{
+	GptNumber a = GptNumber("1.3");
+	GptNumber b = GptNumber("2.0");
+
+	bool ab = a.Compare(b) > 0;
+
+	return;
+}
+
+
+void PrintValues(GptNumber* data, int fromIdx, int toIdx)
+{
+	for (int i = fromIdx; i <= toIdx; ++i)
+	{
+		cout << data[i].StringVal << endl;
+	}
+}
+
+
+
+int InputN()
+{
+	char inputStr[5];
+	cin >> inputStr;
+
+	int result = atoi(inputStr);
+	return result;
+}
+
+GptNumber* InputGptNumbers(int N)
+{
+	GptNumber* data = new GptNumber[N];
+
+	char strInput[8] = { 0,0,0,0,0,0,0,0 }; // 100.000 <- 7자리, + \0
+
+	for (int i = 0; i < N; ++i)
+	{
+		cin >> strInput;
+		GptNumber d = GptNumber(strInput);
+		data[i] = d;
+	}
+
+	return data;
+}
+
+
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
@@ -149,6 +224,8 @@ GptNumber GetPivotValue(GptNumber* source, int from, int to)
 	}
 }
 
+//static int stackNum = 0;
+
 void QuickSort(GptNumber* source, int fromIdx, int toIdx)
 {
 	if (fromIdx >= toIdx)
@@ -156,93 +233,63 @@ void QuickSort(GptNumber* source, int fromIdx, int toIdx)
 		return;
 	}
 
+	//++stackNum;
+	//cout << endl << "stack: " << stackNum << endl;
+
 	GptNumber pivotValue = GetPivotValue(source, fromIdx, toIdx);
 
-	int headCursor = fromIdx;
-	int tailCursor = toIdx;
+	int smallersIdx = 0;
+	int equalsIdx = 0;
+	int biggersIdx = 0;
 
-	while (headCursor < tailCursor)
+	// 분류
+	for (int i = fromIdx; i <= toIdx; ++i)
 	{
-		GptNumber headValue = source[headCursor];
-		GptNumber tailValue = source[tailCursor];
+		GptNumber cursor = source[i];
 
-		while (headValue.Compare(pivotValue) > 0
-			&& headCursor < toIdx)
+		int comparison = pivotValue.Compare(cursor);
+
+		switch (comparison)
 		{
-			// headValue가 작으면 headCursor 이동
-			++headCursor;
-			headValue = source[headCursor];
+		case -1: // pivot보다 작은 값
+			smallers[smallersIdx] = cursor;
+			++smallersIdx;
+			break;
+		case 0: // pivot과 동일
+			equals[equalsIdx] = cursor;
+			++equalsIdx;
+			break;
+		case 1: // pivot보다 큰 값
+			biggers[biggersIdx] = cursor;
+			++biggersIdx;
+			break;
 		}
-
-		while (pivotValue.Compare(tailValue) > 0
-			&& tailCursor > fromIdx)
-		{
-			// tailValue가 크면 tailCursor 이동
-			--tailCursor;
-			tailValue = source[tailCursor];
-		}
-		
-		source[headCursor] = tailValue;
-		source[tailCursor] = headValue;
 	}
 
-	QuickSort(source, fromIdx, headCursor);
-	QuickSort(source, headCursor + 1, toIdx);
-}
+	int sourceIdx = fromIdx;
 
-
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-
-
-void PrintValuesDebug(GptNumber* data, int N)
-{
-	cout << endl;
-
-	for (int i = 0; i < N; ++i)
+	for (int i = 0; i < smallersIdx; ++i)
 	{
-		cout << data[i].IntegerPart;
-		if (data[i].FractionPart >= 0)
-		{
-			cout << "." << data[i].FractionPart;
-		}
-
-		cout << " " << data[i].StringVal << endl;
+		source[sourceIdx] = smallers[i];
+		++sourceIdx;
 	}
-}
 
-void PrintValues(GptNumber* data, int N)
-{
-	for (int i = 0; i < N; ++i)
+	for (int i = 0; i < equalsIdx; ++i)
 	{
-		cout << data[i].StringVal << endl;
+		source[sourceIdx] = equals[i];
+		++sourceIdx;
 	}
-}
 
-int InputN()
-{
-	char inputStr[5];
-	cin >> inputStr;
-
-	int result = atoi(inputStr);
-	return result;
-}
-
-GptNumber* InputGptNumbers(int N)
-{
-	GptNumber* data = new GptNumber[N];
-
-	char strInput[8] = { 0,0,0,0,0,0,0,0 }; // 100.000 <- 7자리, + \0
-
-	for (int i = 0; i < N; ++i)
+	for (int i = 0; i < biggersIdx; ++i)
 	{
-		cin >> strInput;
-		GptNumber d = GptNumber(strInput);
-		data[i] = d;
+		source[sourceIdx] = biggers[i];
+		++sourceIdx;
 	}
 
-	return data;
+	QuickSort(source, fromIdx, fromIdx + smallersIdx - 1);
+	QuickSort(source, toIdx - biggersIdx + 1, toIdx);
 }
+
 
 int main(int argc, char** argv)
 {
@@ -250,9 +297,17 @@ int main(int argc, char** argv)
 	
 	GptNumber* data = InputGptNumbers(N);
 
+	smallers = new GptNumber[N];
+	equals = new GptNumber[N];
+	biggers = new GptNumber[N];
+
 	QuickSort(data, 0, N - 1);
 
-	PrintValues(data, N);
+	PrintValues(data, 0, N - 1);
 
+	delete[] data;
+	delete[] smallers;
+	delete[] equals;
+	delete[] biggers;
 	return 0;
 }
